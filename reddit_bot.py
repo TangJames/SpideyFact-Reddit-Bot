@@ -1,10 +1,9 @@
 import os
 import time
+import random
 
 import praw
-
-
-REPLY_MESSAGE = 'I also love Spider-Man! [Here](https://i.redd.it/rhtxxcwpsq001.png) is an image!'
+import spidey_facts
 
 
 def authenticate():
@@ -23,13 +22,18 @@ def main():
     run_bot(reddit, comments_replied_to)
 
 
+def get_reply():
+  random.shuffle(spidey_facts.facts)
+  return 'You requested a Spider-Man fact! Here it is:\n\n' + '>' + spidey_facts.facts[0] + '\n\n[Source code here!](https://github.com/TangJames/SpideyFact-Reddit-Bot)'
+
+
 def run_bot(reddit, comments_replied_to):
   print('Obtaining 25 comments...')
 
-  for comment in reddit.subreddit('test') .comments(limit=25):
+  for comment in reddit.subreddit('test').comments(limit=25):
     if '!Spideyfact' in comment.body and comment.id not in comments_replied_to and comment.author != reddit.user.me():
       print('String with \'!Spideyfact\' found in comment ' + comment.id)
-      comment.reply(REPLY_MESSAGE)
+      comment.reply(get_reply())
       print('Replied to comment ' + comment.id)
 
       comments_replied_to.append(comment.id)
@@ -38,9 +42,10 @@ def run_bot(reddit, comments_replied_to):
           f.write(comment.id + '\n')
 
 
-  print('Sleeping for 10 minutes...')
-  # Sleep for 600 seconds... Which is 10 minutes.
+  print('Sleeping for 10 seconds...')
+  # Sleep for 10 seconds...
   time.sleep(10)
+
 
 def get_saved_comments():
   if not os.path.isfile('comments_replied_to.txt'):
@@ -49,7 +54,7 @@ def get_saved_comments():
     with open('comments_replied_to.txt', 'r') as f:
       comments_replied_to = f.read()
       comments_replied_to = comments_replied_to.split('\n')
-      # comments_replied_to = filter(None, comments_replied_to)
+
 
   return comments_replied_to
 
