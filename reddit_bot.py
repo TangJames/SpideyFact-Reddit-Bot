@@ -30,7 +30,7 @@ def get_reply():
 def run_bot(reddit, comments_replied_to):
   print('Obtaining 25 comments...')
 
-  for comment in reddit.subreddit('Imaginaryspidey').comments(limit=25):
+  for comment in reddit.subreddit('Spiderman').comments(limit=25):
     if '!Spideyfact' in comment.body and comment.id not in comments_replied_to and comment.author != reddit.user.me():
       print('String with \'!Spideyfact\' found in comment ' + comment.id)
       comment.reply(get_reply())
